@@ -16,9 +16,8 @@ npm run preview   # serve the production build
 
 All personal details live in `src/data/site.ts`:
 
-- [ ] `email`: real email address (it is used in the footer, contact page and form)
-- [ ] `upwork`: Upwork profile URL
-- [ ] `socials`: real LinkedIn, GitHub and Dribbble links, or remove the ones he doesn't use
+- [x] `email`, `upwork` and LinkedIn are set
+- [ ] `socials`: GitHub profile URL (currently a placeholder)
 - [ ] `city` and `timeZone`: confirm (they drive the live clock)
 - [ ] `available`: set to `false` to show "Booked for now"
 

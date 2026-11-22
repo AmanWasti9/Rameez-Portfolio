@@ -4,16 +4,13 @@ export const site = {
   first: 'Rameez',
   last: 'Raza',
   role: 'SaaS Product Developer · UI Engineering',
-  // TODO: replace with Rameez's real email address
-  email: 'hello@rameezraza.dev',
-  // TODO: replace with Rameez's Upwork profile URL
-  upwork: 'https://www.upwork.com/',
-  // TODO: replace or remove any links he doesn't use
+  email: 'ramisraza95@gmail.com',
+  upwork: 'https://www.upwork.com/freelancers/~014c62765550434f0d',
   socials: [
-    { label: 'Upwork', href: 'https://www.upwork.com/' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/' },
+    { label: 'Upwork', href: 'https://www.upwork.com/freelancers/~014c62765550434f0d' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/smrameezraza/' },
+    // TODO: replace with Rameez's GitHub profile URL
     { label: 'GitHub', href: 'https://github.com/' },
-    { label: 'Dribbble', href: 'https://dribbble.com/' },
   ],
   // TODO: confirm city and time zone
   city: 'Karachi',
