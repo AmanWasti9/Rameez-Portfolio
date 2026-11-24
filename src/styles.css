@@ -534,6 +534,16 @@ ul, ol { padding: 0; list-style: none; }
 .chip.is-on { background: var(--ink); color: var(--paper); box-shadow: none; }
 .chip:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
 
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
+.btn:disabled { opacity: 0.6; cursor: progress; }
+.form-note { font-size: 15px; max-width: 42ch; }
+.form-note:empty { display: none; }
+.form-note--sent { color: var(--ink); }
+.form-note--sent::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 10px; background: var(--accent); }
+.form-note--error { color: #b3261e; }
+.form-note a { text-decoration: underline; text-underline-offset: 3px; }
+
 /* ── 404 ─────────────────────────────────────────────────── */
 .notfound { min-height: 100svh; padding: calc(var(--nav-h) + 6rem) var(--g) var(--g); display: flex; flex-direction: column; gap: 2rem; }
 .notfound .page-hero-lede { margin: 0; }

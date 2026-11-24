@@ -1,4 +1,5 @@
 import { useRef, useState, type FormEvent } from 'react';
+import emailjs from '@emailjs/browser';
 import { useReveal } from '../hooks/useReveal';
 import { Magnetic } from '../components/Magnetic';
 import { Roll } from '../components/Roll';
@@ -8,15 +9,23 @@ import { site } from '../data/site';
 const kinds = ['SaaS or dashboard', 'Marketing website', 'Figma to React', 'Something else'];
 const budgets = ['Under $1k', '$1k – $3k', '$3k – $8k', '$8k+', 'Not sure yet'];
 
+// EmailJS credentials come from .env (see .env.example). The public key is safe in the browser.
+const EMAILJS = {
+  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+};
+const emailJsReady = Boolean(EMAILJS.serviceId && EMAILJS.templateId && EMAILJS.publicKey);
+
+type Status = 'idle' | 'sending' | 'sent' | 'error';
+
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
   const [kind, setKind] = useState(kinds[0]);
+  const [status, setStatus] = useState<Status>('idle');
   useReveal(ref);
 
-  // No backend: compose the enquiry into the visitor's own mail app.
-  const submit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const f = new FormData(e.currentTarget);
+  const mailtoFallback = (f: FormData) => {
     const body = [
       `Name: ${f.get('name')}`,
       `Email: ${f.get('email')}`,
@@ -26,6 +35,41 @@ export default function Contact() {
       String(f.get('message') ?? ''),
     ].join('\n');
     window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(`Project enquiry: ${kind}`)}&body=${encodeURIComponent(body)}`;
+  };
+
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (status === 'sending') return;
+    const form = e.currentTarget;
+    const f = new FormData(form);
+
+    // Hidden field only bots fill in: pretend it worked and drop it.
+    if (f.get('website')) { setStatus('sent'); return; }
+
+    // Until EmailJS is configured, fall back to the visitor's mail app.
+    if (!emailJsReady) { mailtoFallback(f); return; }
+
+    setStatus('sending');
+    try {
+      await emailjs.send(
+        EMAILJS.serviceId!,
+        EMAILJS.templateId!,
+        {
+          from_name: String(f.get('name') ?? ''),
+          from_email: String(f.get('email') ?? ''),
+          reply_to: String(f.get('email') ?? ''),
+          project_type: kind,
+          budget: String(f.get('budget') ?? ''),
+          message: String(f.get('message') ?? ''),
+        },
+        { publicKey: EMAILJS.publicKey! },
+      );
+      form.reset();
+      setKind(kinds[0]);
+      setStatus('sent');
+    } catch {
+      setStatus('error');
+    }
   };
 
   return (
@@ -58,6 +102,7 @@ export default function Contact() {
         </aside>
 
         <form className="form" onSubmit={submit} data-hero>
+          <input className="hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
           <fieldset className="field field--chips" data-reveal="fade" data-delay="0.55">
             <legend>What do you need?</legend>
             <div className="chips">
@@ -93,10 +138,18 @@ export default function Contact() {
             <textarea name="message" rows={5} required placeholder="What are you building, who is it for, and when do you need it?" />
           </label>
 
-          <div data-reveal="fade" data-delay="0.83">
+          <div className="form-actions" data-reveal="fade" data-delay="0.83">
             <Magnetic>
-              <button type="submit" className="btn btn--ink roll-host"><Roll text="Send enquiry" /></button>
+              <button type="submit" className="btn btn--ink roll-host" disabled={status === 'sending'}>
+                <Roll text={status === 'sending' ? 'Sending…' : 'Send enquiry'} />
+              </button>
             </Magnetic>
+            <p className={`form-note form-note--${status}`} role="status" aria-live="polite">
+              {status === 'sent' && 'Thanks, your message is in. I’ll reply within a working day.'}
+              {status === 'error' && (
+                <>Something went wrong sending that. Please email <a href={`mailto:${site.email}`}>{site.email}</a> directly.</>
+              )}
+            </p>
           </div>
         </form>
       </section>

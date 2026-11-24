@@ -16,12 +16,36 @@ npm run preview   # serve the production build
 
 All personal details live in `src/data/site.ts`:
 
-- [x] `email`, `upwork` and LinkedIn are set
-- [ ] `socials`: GitHub profile URL (currently a placeholder)
+- [x] `email`, `upwork`, LinkedIn and GitHub are set
+
 - [ ] `city` and `timeZone`: confirm (they drive the live clock)
 - [ ] `available`: set to `false` to show "Booked for now"
 
 Project copy lives in `src/data/projects.ts`.
+
+## Contact form (EmailJS)
+
+The contact form sends enquiries straight to Rameez's inbox through [EmailJS](https://www.emailjs.com), with no backend.
+Until the keys below are set, the form falls back to opening the visitor's own mail app.
+
+1. Create a free EmailJS account and **Add New Service** → Gmail → connect `ramisraza95@gmail.com`. Copy the **Service ID**.
+2. **Email Templates** → Create New Template. Set **To Email** to `ramisraza95@gmail.com` and **Reply To** to `{{reply_to}}`. Use this subject and body:
+   - Subject: `New enquiry from {{from_name}}: {{project_type}}`
+   - Body:
+     ```
+     Name: {{from_name}}
+     Email: {{from_email}}
+     Project: {{project_type}}
+     Budget: {{budget}}
+
+     {{message}}
+     ```
+   Copy the **Template ID**.
+3. **Account → General** → copy your **Public Key**.
+4. Locally: copy `.env.example` to `.env` and fill in the three values, then restart `npm run dev`.
+5. On Vercel/Netlify: add the same three variables (`VITE_EMAILJS_SERVICE_ID`, `VITE_EMAILJS_TEMPLATE_ID`, `VITE_EMAILJS_PUBLIC_KEY`) in the project's environment settings, then redeploy.
+
+The public key is meant to be visible in the browser. To limit abuse, in EmailJS go to **Account → Security** and restrict allowed domains to the live site, and keep the free plan's monthly limit in mind (a hidden honeypot field already filters most bots).
 
 ## Images
 

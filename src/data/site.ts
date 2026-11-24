@@ -9,8 +9,7 @@ export const site = {
   socials: [
     { label: 'Upwork', href: 'https://www.upwork.com/freelancers/~014c62765550434f0d' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/smrameezraza/' },
-    // TODO: replace with Rameez's GitHub profile URL
-    { label: 'GitHub', href: 'https://github.com/' },
+    { label: 'GitHub', href: 'https://github.com/rameezraza1998' },
   ],
   // TODO: confirm city and time zone
   city: 'Karachi',
